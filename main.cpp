@@ -44,6 +44,9 @@
 
 #include "default_config.h"
 
+#include "TransmissionDeviceBG96.h"
+
+tasks::TransmissionDeviceBG96* bg96 = NULL;
 
 namespace {
 
@@ -369,7 +372,13 @@ public:
         SocketAddress sa;
         nsapi_error_t err;
 
+#ifdef BTT        
+        if (bg96) {
+            netif = bg96->get_network_interface();
+        } 
+#else        
         NetworkInterface *netif = NetworkInterface::get_default_instance();
+#endif        
         if (!netif) {
             printf("ERROR - can't get default network instance!\n");
             return -1;
@@ -466,6 +475,15 @@ int main() {
     mbed_event_queue()->call_every(STATS_SAMPLE_TIME_MS, print_stats);
 #else
     avs_log(mbed_stats, INFO, "All stats disabled");
+#endif
+
+#ifdef BTT
+    bg96 = new tasks::TransmissionDeviceBG96(*Bg96::get_sync_instance());
+    if (!bg96) {
+        printf("bg96 device not initialized !!!!!");
+    } else {
+        bg96->enable();
+    }
 #endif
 
     // See https://github.com/ARMmbed/mbed-os/issues/7069. In general this is

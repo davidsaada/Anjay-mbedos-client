@@ -1,0 +1,43 @@
+{
+	"BT_01001_V0_1": {
+		"inherits": [
+			"NUCLEO_L496ZG"
+		],
+		"detect_code": [
+			"0313"
+		],
+		"macros_add": [
+			"BT_01001_V0_1"
+		]
+	},
+	"BT_01001_V0_2": {
+		"inherits": [
+			"NUCLEO_L496ZG"
+		],
+		"detect_code": [
+			"0313"
+		],
+		"macros_add": [
+			"BT_01001_V0_2"
+		],
+		"device_has_add": [
+			"QSPI"
+		],
+		"extra_labels_add": [
+			"MX25R6435F"
+		],
+		"components_add": [
+			"QSPIF",
+			"FLASHIAP"
+		],
+		"overrides": {
+			"clock_source": "USE_PLL_HSI"
+		},
+		"supported_toolchains": [
+			"ARM",
+			"uARM",
+			"IAR",
+			"GCC_ARM"
+		]
+	}
+}

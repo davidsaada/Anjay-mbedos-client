@@ -10,16 +10,31 @@
   ],
   "target_overrides": {
     "*": {
-      "cellular.radio-access-technology": "CellularNetwork::RadioAccessTechnology::RAT_GSM",
       "mbed-trace.enable": 1,
       "mbed-trace.max-level": "TRACE_LEVEL_DEBUG",
-      "nsapi.default-cellular-apn": "\"pp.vodafone.co.uk\"",
-      "nsapi.default-cellular-username": "\"wap\"",
-      "nsapi.default-cellular-password": "\"wap\"",
+      "nsapi.default-cellular-apn": "\"m2m.tele2.com\"",
       "platform.stdio-baud-rate": 115200,
       "platform.stdio-convert-newlines": 1,
       "target.OUTPUT_EXT": "bin",
-      "target.app_offset": "0x10000"
+      "target.app_offset": "0x10000",
+      "target.network-default-interface-type": "CELLULAR",
+
+			"nanostack-hal.critical-section-usable-from-interrupt" : true,
+			"nanostack-hal.event-loop-dispatch-from-application"   : false,
+			"nanostack-hal.event-loop-use-mbed-events"             : true,
+			"nanostack.configuration"                              : "ethernet_host",
+
+			"nsapi.default-cellular-plmn"               : null,
+			"nsapi.default-cellular-sim-pin"            : null,
+			"nsapi.default-cellular-username"           : null,
+			"nsapi.default-cellular-password"           : null,
+
+			"cellular.debug-at"                         : false,
+			"cellular.use-apn-lookup"                   : false,
+			"cellular.use-sms"                          : false,
+			"cellular.clear-on-connect"                 : true,
+			"cellular.offload-dns-queries"              : null,
+			"QUECTEL_BG96.provide-default"              : false
     },
     "DISCO_L496AG": {
       "stmod_cellular.provide-default": "true",

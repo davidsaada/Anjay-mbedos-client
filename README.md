@@ -91,3 +91,19 @@ Press any key in 3 seconds to enter device configuration menu...
 You can then press any key on your keyboard to enter the configuration menu. After that you'll
 see a few configuration options that can be altered and persisted within the flash memory for
 future bootups.
+
+
+# Bulk Tainer Telematics demo
+
+## Running demo
+1. Change branche to `btt_demo`
+2. Setup workspace: `mbed deploy`
+3. Change your device `endpoint_name` in `mbed_app.json`
+4. Mock custom board: `mbedls --mock 0828:BT_01001_V0_2`
+5. If using mbed-os 5.X apply AT_Handler patch from https://github.com/Waleed-Elmughrabi/BTTM-IOT-NODE-Master
+6. Build&flash: `mbed compile -m BT_01001_V0_2 --profile debug --flash`
+7. Add device to Coiote Device Management
+    * Go to Device Inventory, click `+ Add device` button
+    * Than Connect your LwM2M device via via the Management server: set `endpoint_name` as `Device ID`, any `Friendly name`, and `Security mode` as `NoSec` than click `Add device`
+    * Flash device and wait until it get connected then move to next step
+8. You have connected device

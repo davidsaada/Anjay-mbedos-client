@@ -13,7 +13,9 @@
       "cellular.radio-access-technology": "CellularNetwork::RadioAccessTechnology::RAT_GSM",
       "mbed-trace.enable": 1,
       "mbed-trace.max-level": "TRACE_LEVEL_DEBUG",
-      "nsapi.default-cellular-apn": "\"Plus\"",
+      "nsapi.default-cellular-apn": "\"pp.vodafone.co.uk\"",
+      "nsapi.default-cellular-username": "\"wap\"",
+      "nsapi.default-cellular-password": "\"wap\"",
       "platform.stdio-baud-rate": 115200,
       "platform.stdio-convert-newlines": 1,
       "target.OUTPUT_EXT": "bin",
@@ -28,17 +30,24 @@
       "target.macros_add": [
         "CELLULAR_DEVICE=STModCellular"
       ]
+    },
+    "DISCO_L475VG_IOT01A": {
+        "target.network-default-interface-type"     : "WIFI",
+        "target.components_add"                     : ["WIFI_ISM43362"],
+        "nsapi.default-wifi-security"               : "WPA_WPA2",
+        "nsapi.default-wifi-ssid"                   : "\"SSID\"",
+        "nsapi.default-wifi-password"               : "\"PASSWORD\""
     }
   },
   "config": {
-    "endpoint_name": "\"urn:dev:os:anjay-mbedos-test\"",
-    "rg_nosec_addr": "\"coap://try-anjay.avsystem.com:5683\"",
-    "rg_dtls_addr": "\"coaps://try-anjay.avsystem.com:5684\"",
-    "bs_nosec_addr": "\"coap://try-anjay.avsystem.com:5693\"",
-    "bs_dtls_addr": "\"coaps://try-anjay.avsystem.com:5684\"",
-    "with_rg_server": false,
-    "with_bs_server": true,
-    "with_dtls": false,
+    "endpoint_name": "\"***PLEASE SET ENDPOINT_NAME HERE***\"",
+    "rg_nosec_addr": "\"coap://lwm2m-test.avsystem.io:5683\"",
+    "rg_dtls_addr": "\"coaps://lwm2m-test.avsystem.io:5684\"",
+    "bs_nosec_addr": "\"coap://lwm2m-test.avsystem.io:5693\"",
+    "bs_dtls_addr": "\"coaps://lwm2m-test.avsystem.io:5684\"",
+    "with_rg_server": true,
+    "with_bs_server": false,
+    "with_dtls": true,
     "psk_identity": "\"***PLEASE SET PSK IDENTITY HERE***\"",
     "psk_key": "\"***PLEASE SET PSK KEY HERE***\"",
     "serial_menu_echo": true

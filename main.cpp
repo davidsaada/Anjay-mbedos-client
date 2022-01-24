@@ -51,7 +51,9 @@ namespace {
 // We hold these as globals because we cannot pass them two via lambda capture
 // to lwm2m_serve() (see MBED_ENABLE_IF_CALLBACK_COMPATIBLE in
 // mbed-os/platform/Callback.h)
+#ifdef TARGET_DISCO_L496AG
 CellularNetwork *NETWORK;
+#endif // TARGET_DISCO_L496AG
 Lwm2mConfig SERIAL_MENU_CONFIG;
 
 int setup_security_object(anjay_t *anjay) {
@@ -230,7 +232,7 @@ void lwm2m_serve() {
             avs_log(lwm2m, ERROR, "cannot register data model objects");
             goto finish;
         }
-
+#ifdef TARGET_DISCO_L496AG
         if (NETWORK) {
             if (auto *ctx = CellularContext::get_default_instance()) {
                 if (conn_monitoring_object_install(anjay, ctx, NETWORK)) {
@@ -239,6 +241,7 @@ void lwm2m_serve() {
                 }
             }
         }
+#endif // TARGET_DISCO_L496AG
 
         lwm2m_check_for_notifications(anjay_get_scheduler(anjay), &anjay);
 
@@ -372,8 +375,22 @@ public:
             return -1;
         }
 
+#ifdef TARGET_DISCO_L475VG_IOT01A
+        if (WiFiInterface *wifi = netif->wifiInterface()) {
+            wifi->connect(MBED_CONF_NSAPI_DEFAULT_WIFI_SSID, MBED_CONF_NSAPI_DEFAULT_WIFI_PASSWORD, NSAPI_SECURITY_WPA_WPA2);
+            printf("Configuring network interface\r\n");
+            for (int retry = 0;
+                 netif->get_connection_status() != NSAPI_STATUS_GLOBAL_UP;
+                 ++retry) {
+                    printf("connect, retry = %d\r\n", retry);
+                    nsapi_error_t err = netif->connect();
+                    printf("connect result = %d\r\n", err);
+            }
+        }
+#else
         if (CellularInterface *cellular = netif->cellularInterface()) {
             set_modem_configuration(cellular, config.modem_config);
+
         }
 
         printf("Configuring network interface\n");
@@ -443,7 +460,6 @@ int main() {
     mbed_trace_init();
     avs_log_set_default_level(SERIAL_MENU_CONFIG.log_level);
     avs_log_set_handler(log_handler);
-
 #if MBED_MEM_TRACING_ENABLED                                     \
         || (MBED_STACK_STATS_ENABLED && MBED_HEAP_STATS_ENABLED) \
         || (MBED_HEAP_STATS_ENABLED && MBED_HEAP_STATS_ENABLED)

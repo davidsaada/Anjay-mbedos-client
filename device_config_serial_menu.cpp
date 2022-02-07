@@ -34,7 +34,11 @@ int parse_security_mode(const string &server_uri,
     static const char prefix[] = "coaps";
     if (!avs_strncasecmp(avs_url_protocol(parsed_url), prefix,
                          sizeof(prefix))) {
+#if MBED_CONF_APP_WITH_PSK
         *out_security_mode = ANJAY_SECURITY_PSK;
+#else
+        *out_security_mode = ANJAY_SECURITY_CERTIFICATE;
+#endif
     } else {
         *out_security_mode = ANJAY_SECURITY_NOSEC;
     }
@@ -64,6 +68,7 @@ SerialConfigMenu create_server_config_menu(const char *label,
                               } else {
                                   break;
                               }
+
                           }
                           server_config.server_uri = new_server_uri;
                           server_config.status =
@@ -115,6 +120,13 @@ SerialConfigMenu create_server_config_menu(const char *label,
 
 } // namespace
 
+#if !MBED_CONF_APP_WITH_PSK
+extern const unsigned char DEVICE_PRIVATE_KEY[];
+extern unsigned int DEVICE_PRIVATE_KEY_SIZE;
+extern const unsigned char DEVICE_CERTIFICATE[];
+extern const unsigned int DEVICE_CERTIFICATE_SIZE;
+#endif
+
 anjay_security_instance_t
 Lwm2mServerConfig::as_security_instance(anjay_ssid_t ssid) const {
     anjay_security_instance_t instance;
@@ -123,11 +135,19 @@ Lwm2mServerConfig::as_security_instance(anjay_ssid_t ssid) const {
     instance.server_uri = server_uri.c_str();
     instance.bootstrap_server = (ssid == ANJAY_SSID_BOOTSTRAP);
     instance.security_mode = security_mode;
+#if MBED_CONF_APP_WITH_PSK
     instance.public_cert_or_psk_identity =
             (const uint8_t *) psk_identity.c_str();
     instance.public_cert_or_psk_identity_size = psk_identity.size();
     instance.private_cert_or_psk_key = (const uint8_t *) psk_key.c_str();
     instance.private_cert_or_psk_key_size = psk_key.size();
+#else
+    instance.public_cert_or_psk_identity =
+            (const uint8_t *) DEVICE_CERTIFICATE;
+    instance.public_cert_or_psk_identity_size = DEVICE_CERTIFICATE_SIZE;
+    instance.private_cert_or_psk_key = (const uint8_t *) DEVICE_PRIVATE_KEY;
+    instance.private_cert_or_psk_key_size = DEVICE_PRIVATE_KEY_SIZE;
+#endif
     return instance;
 }
 
@@ -310,7 +330,11 @@ void show_menu_and_maybe_update_config(Lwm2mConfig &config) {
 namespace {
 
 #if MBED_CONF_APP_WITH_DTLS
+#if MBED_CONF_APP_WITH_PSK
 constexpr anjay_security_mode_t INITIAL_SECURITY_MODE = ANJAY_SECURITY_PSK;
+#else
+constexpr anjay_security_mode_t INITIAL_SECURITY_MODE = ANJAY_SECURITY_CERTIFICATE;
+#endif
 #else
 constexpr anjay_security_mode_t INITIAL_SECURITY_MODE = ANJAY_SECURITY_NOSEC;
 #endif

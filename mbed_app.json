@@ -48,6 +48,7 @@
     "with_rg_server": true,
     "with_bs_server": false,
     "with_dtls": true,
+    "with_psk": true,
     "psk_identity": "\"***PLEASE SET PSK IDENTITY HERE***\"",
     "psk_key": "\"***PLEASE SET PSK KEY HERE***\"",
     "serial_menu_echo": true

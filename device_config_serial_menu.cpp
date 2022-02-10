@@ -119,13 +119,12 @@ SerialConfigMenu create_server_config_menu(const char *label,
 }
 
 } // namespace
-
-#if !MBED_CONF_APP_WITH_PSK
+#if MBED_CONF_APP_WITH_DTLS && !MBED_CONF_APP_WITH_PSK
 extern const unsigned char DEVICE_PRIVATE_KEY[];
 extern unsigned int DEVICE_PRIVATE_KEY_SIZE;
 extern const unsigned char DEVICE_CERTIFICATE[];
 extern const unsigned int DEVICE_CERTIFICATE_SIZE;
-#endif
+#endif // MBED_CONF_APP_WITH_DTLS && !MBED_CONF_APP_WITH_PSK
 
 anjay_security_instance_t
 Lwm2mServerConfig::as_security_instance(anjay_ssid_t ssid) const {
@@ -135,7 +134,7 @@ Lwm2mServerConfig::as_security_instance(anjay_ssid_t ssid) const {
     instance.server_uri = server_uri.c_str();
     instance.bootstrap_server = (ssid == ANJAY_SSID_BOOTSTRAP);
     instance.security_mode = security_mode;
-#if MBED_CONF_APP_WITH_PSK
+#if MBED_CONF_APP_WITH_PSK || !MBED_CONF_APP_WITH_DTLS
     instance.public_cert_or_psk_identity =
             (const uint8_t *) psk_identity.c_str();
     instance.public_cert_or_psk_identity_size = psk_identity.size();

@@ -307,8 +307,8 @@ void print_stats(void) {
 #else
     mbed_stats_heap_t heap_stats;
     mbed_stats_heap_get(&heap_stats);
-    avs_log(mbed_stats, INFO, "Heap: %lu/%lu B used", heap_stats.current_size,
-            heap_stats.reserved_size);
+    avs_log(mbed_stats, INFO, "Heap: %lu/%lu B used (%lu max)", heap_stats.current_size,
+            heap_stats.reserved_size, heap_stats.max_size);
 #endif
 
 #if !MBED_CPU_STATS_ENABLED

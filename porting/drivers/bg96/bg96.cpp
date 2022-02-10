@@ -1,3 +1,4 @@
+#if defined(BT_01001_V0_1) || defined(BT_01001_V0_2)
 #include "mbed.h"
 #include "mbed_trace.h"
 
@@ -371,3 +372,5 @@ CellularDevice* CellularDevice::get_default_instance() {
     return static_cast<CellularDevice*>(&bg96);
   });
 }
+#endif // #if defined(BT_01001_V0_1) || defined(BT_01001_V0_2)
+

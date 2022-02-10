@@ -42,11 +42,17 @@
 #include "humidity.h"
 #include "magnetometer.h"
 
+#include "firmware_update.h"
+
 #include "default_config.h"
 
-#include "TransmissionDeviceBG96.h"
+#define WIFI 1
+#define CELLULAR 2
 
+#if (MBED_CONF_TARGET_NETWORK_DEFAULT_INTERFACE_TYPE == CELLULAR)
+#include "TransmissionDeviceBG96.h"
 tasks::TransmissionDeviceBG96* bg96 = NULL;
+#endif
 
 namespace {
 
@@ -54,9 +60,9 @@ namespace {
 // We hold these as globals because we cannot pass them two via lambda capture
 // to lwm2m_serve() (see MBED_ENABLE_IF_CALLBACK_COMPATIBLE in
 // mbed-os/platform/Callback.h)
-#ifdef TARGET_DISCO_L496AG
+#if (MBED_CONF_TARGET_NETWORK_DEFAULT_INTERFACE_TYPE == CELLULAR)
 CellularNetwork *NETWORK;
-#endif // TARGET_DISCO_L496AG
+#endif // CELLULAR
 Lwm2mConfig SERIAL_MENU_CONFIG;
 
 int setup_security_object(anjay_t *anjay) {
@@ -231,11 +237,12 @@ void lwm2m_serve() {
             || device_object_install(anjay) || joystick_object_install(anjay)
             || humidity_object_install(anjay) || barometer_object_install(anjay)
             || magnetometer_object_install(anjay)
+            || fw_update_install(anjay)
             || accelerometer_object_install(anjay)) {
             avs_log(lwm2m, ERROR, "cannot register data model objects");
             goto finish;
         }
-#ifdef TARGET_DISCO_L496AG
+#if (MBED_CONF_TARGET_NETWORK_DEFAULT_INTERFACE_TYPE == CELLULAR)
         if (NETWORK) {
             if (auto *ctx = CellularContext::get_default_instance()) {
                 if (conn_monitoring_object_install(anjay, ctx, NETWORK)) {
@@ -244,7 +251,7 @@ void lwm2m_serve() {
                 }
             }
         }
-#endif // TARGET_DISCO_L496AG
+#endif // CELLULAR
 
         lwm2m_check_for_notifications(anjay_get_scheduler(anjay), &anjay);
 
@@ -371,50 +378,44 @@ public:
     int init(Lwm2mConfig &config) {
         SocketAddress sa;
         nsapi_error_t err;
+        NetworkInterface *netif = NULL;
 
-#ifdef BTT        
+#ifdef TARGET_BT_01001_V0_2
         if (bg96) {
             netif = bg96->get_network_interface();
         } 
 #else        
-        NetworkInterface *netif = NetworkInterface::get_default_instance();
-#endif        
+        netif = NetworkInterface::get_default_instance();
+#endif  
         if (!netif) {
             printf("ERROR - can't get default network instance!\n");
             return -1;
         }
-
-#ifdef TARGET_DISCO_L475VG_IOT01A
+        
+#if (MBED_CONF_TARGET_NETWORK_DEFAULT_INTERFACE_TYPE == WIFI)
         if (WiFiInterface *wifi = netif->wifiInterface()) {
             wifi->connect(MBED_CONF_NSAPI_DEFAULT_WIFI_SSID, MBED_CONF_NSAPI_DEFAULT_WIFI_PASSWORD, NSAPI_SECURITY_WPA_WPA2);
-            printf("Configuring network interface\r\n");
-            for (int retry = 0;
-                 netif->get_connection_status() != NSAPI_STATUS_GLOBAL_UP;
-                 ++retry) {
-                    printf("connect, retry = %d\r\n", retry);
-                    nsapi_error_t err = netif->connect();
-                    printf("connect result = %d\r\n", err);
-            }
         }
-#else
+#elif (MBED_CONF_TARGET_NETWORK_DEFAULT_INTERFACE_TYPE == CELLULAR)
         if (CellularInterface *cellular = netif->cellularInterface()) {
             set_modem_configuration(cellular, config.modem_config);
-
         }
+#endif
+		printf("Configuring network interface\r\n");
+		for (int retry = 0;
+			 netif->get_connection_status() != NSAPI_STATUS_GLOBAL_UP;
+			 ++retry) {
+				printf("connect, retry = %d\r\n", retry);
+				nsapi_error_t err = netif->connect();
+				printf("connect result = %d\r\n", err);
+		}
 
-        printf("Configuring network interface\n");
-        for (int retry = 0;
-             netif->get_connection_status() != NSAPI_STATUS_GLOBAL_UP;
-             ++retry) {
-            printf("connect, retry = %d\n", retry);
-            nsapi_error_t err = netif->connect();
-            printf("connect result = %d\n", err);
-        }
-
+#if (MBED_CONF_TARGET_NETWORK_DEFAULT_INTERFACE_TYPE == CELLULAR)
         if (CellularDevice *device = CellularDevice::get_default_instance()) {
             NETWORK = device->open_network();
             NETWORK->set_access_technology(config.modem_config.rat);
         }
+#endif // CELLULAR
 
         // Print IP address and MAC address, quite useful in troubleshooting
         err = netif->get_ip_address(&sa);
@@ -477,7 +478,7 @@ int main() {
     avs_log(mbed_stats, INFO, "All stats disabled");
 #endif
 
-#ifdef BTT
+#ifdef TARGET_BT_01001_V0_2
     bg96 = new tasks::TransmissionDeviceBG96(*Bg96::get_sync_instance());
     if (!bg96) {
         printf("bg96 device not initialized !!!!!");

@@ -1,0 +1,86 @@
+{
+    "requires": ["bare-metal",
+                 "rtos-api",
+                 "update-client",
+                 "storage",
+                 "storage_filesystem",
+                 "SecureStore",
+                 "storage_tdb_internal",
+                 "storage_tdb_external",
+                 "mbed-bootloader",
+                 "mbedtls",
+                 "system-storage",
+                 "filesystem",
+                 "filesystemstore",
+                 "littlefs",
+                 "fat_chan",
+                 "spif",
+                 "qspif",
+                 "sd",
+                 "flashiap-block-device",
+                 "direct-access-devicekey",
+                 "tdbstore",
+                 "kv-config",
+                 "kv-global-api",
+                 "kv-map",
+                 "device_key",
+                 "mbed-trace"
+    ],
+    "config": {
+        "rbp-size": {
+            "help": "The size of the area of flash reserved for kvstore rbp, it neeeds to be even number of flash sectors",
+            "macro_name": "KV_STORE_RBP_SIZE",
+            "required": true
+        },
+        "kvstore-size": {
+            "help": "The size of the area of flash reserved for kvstore, it neeeds to be even number of flash sectors",
+            "macro_name": "KVSTORE_SIZE",
+            "required": true
+        }
+    },
+    "macros": [
+        "MBED_CLOUD_CLIENT_UPDATE_STORAGE=ARM_UCP_FLASHIAP_BLOCKDEVICE",
+        "ARM_UC_USE_PAL_BLOCKDEVICE=1",
+        "ARM_UC_PAAL_TRACE_ENABLE=1",
+        "MBED_ACTIVE_HEADER_SIZE=(2048)",
+        "MBED_FLASH_BANK_SIZE=(MBED_ROM_SIZE/2)"
+    ],
+    "target_overrides": {
+        "*": {
+            "target.c_lib": "small",
+            "target.restrict_size": "0xC000",
+            "target.components_add": [
+                "QSPIF",
+                "FLASHIAP"
+            ],
+            "platform.minimal-printf-enable-floating-point": false,
+            "platform.minimal-printf-enable-64-bit": false,
+            "platform.stdio-minimal-console-only": true,
+            "platform.default-serial-baud-rate": 115200,
+            "platform.stdio-baud-rate": 115200,
+            "platform.stdio-convert-newlines": true,
+            "platform.stdio-buffered-serial": false,
+            "platform.stdio-flush-at-exit": true,
+            "kvstore-size": "(0x100000)",
+            "rbp-size": "(32*1024)",
+            "mbed-bootloader.show-serial-output": 1,
+            "mbed-bootloader.bootloader-size": "0xC000",
+            "mbed-bootloader.use-kvstore-rot": 1,
+            "mbed-bootloader.application-start-address": "0x800C800",
+            "mbed-bootloader.application-jump-address": "0x800C800",
+            "mbed-bootloader.max-application-size": "(MBED_ROM_SIZE - MBED_BOOTLOADER_SIZE - MBED_ACTIVE_HEADER_SIZE - KV_STORE_RBP_SIZE)",
+            "storage.storage_type": "TDB_EXTERNAL",
+            "storage_tdb_external.rbp_internal_size": "(KV_STORE_RBP_SIZE)",
+            "storage_tdb_external.internal_base_address": "((MBED_ROM_START + MBED_ROM_SIZE) - KV_STORE_RBP_SIZE)",
+            "storage_tdb_external.blockdevice": "QSPIF",
+            "storage_tdb_external.external_size": "(0x100000)",
+            "storage_tdb_external.external_base_address": "(0)",
+            "update-client.application-details": "(MBED_ROM_START + MBED_BOOTLOADER_SIZE)",
+            "update-client.storage-address": "(MBED_CONF_STORAGE_TDB_EXTERNAL_EXTERNAL_BASE_ADDRESS + KVSTORE_SIZE)",
+            "update-client.storage-size": "((MBED_ROM_SIZE -MBED_BOOTLOADER_SIZE -MBED_ACTIVE_HEADER_SIZE -KV_STORE_RBP_SIZE) * MBED_CONF_UPDATE_CLIENT_STORAGE_LOCATIONS)",
+            "update-client.storage-locations": 2,
+            "update-client.storage-page": 1,
+            "update-client.firmware-header-version": 2
+        }
+    }
+}

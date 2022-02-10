@@ -1,6 +1,5 @@
 {
   "macros": [
-    "SENSORS_IKS01A2=0",
     "__STDC_FORMAT_MACROS",
     "MBED_CPU_STATS_ENABLED=1",
     "MBED_HEAP_STATS_ENABLED=1",
@@ -12,50 +11,110 @@
     "*": {
       "mbed-trace.enable": 1,
       "mbed-trace.max-level": "TRACE_LEVEL_DEBUG",
-      "nsapi.default-cellular-apn": "\"m2m.tele2.com\"",
+      "nsapi.default-cellular-apn": "\"Plus\"",
       "platform.stdio-baud-rate": 115200,
       "platform.stdio-convert-newlines": 1,
       "target.OUTPUT_EXT": "bin",
-      "target.app_offset": "0x10000",
-      "target.network-default-interface-type": "CELLULAR",
-
-			"nanostack-hal.critical-section-usable-from-interrupt" : true,
-			"nanostack-hal.event-loop-dispatch-from-application"   : false,
-			"nanostack-hal.event-loop-use-mbed-events"             : true,
-			"nanostack.configuration"                              : "ethernet_host",
-
-			"nsapi.default-cellular-plmn"               : null,
-			"nsapi.default-cellular-sim-pin"            : null,
-			"nsapi.default-cellular-username"           : null,
-			"nsapi.default-cellular-password"           : null,
-
-			"cellular.debug-at"                         : false,
-			"cellular.use-apn-lookup"                   : false,
-			"cellular.use-sms"                          : false,
-			"cellular.clear-on-connect"                 : true,
-			"cellular.offload-dns-queries"              : null,
-			"QUECTEL_BG96.provide-default"              : false
+      "target.features_add"                       : ["BOOTLOADER"],
+      "target.network-default-interface-type"     : "CELLULAR",
+      "fota.enable"                 : true,
+      "fota.block-device-type"      : "FOTA_DEFAULT_MBED_OS_BD",
+      "fota.trace-enable"           : true,
+      "fota.debug-trace"            : true,
+      "fota.has-legacy-bootloader"  : true,
+      "fota.fw-header-external"     : true
     },
     "DISCO_L496AG": {
+      "cellular.radio-access-technology": "CellularNetwork::RadioAccessTechnology::RAT_GSM",
+      "target.bootloader_img"       : "./bootloader/DISCO_L496AG/mbed-bootloader_application.bin",
+      "target.header_offset"        : "0xc000",
+      "target.app_offset"           : "0xc800",
+      "fota.storage-start-address"  : "0x100000",
+      "fota.storage-size"           : "0x1d7000",
       "stmod_cellular.provide-default": "true",
       "target.components_add": [
         "STMOD_CELLULAR"
       ],
       "target.network-default-interface-type": "CELLULAR",
       "target.macros_add": [
-        "CELLULAR_DEVICE=STModCellular"
+        "SENSORS_IKS01A2=0",
+        "CELLULAR_DEVICE=STModCellular",
+            "MBED_CONF_APP_ENDPOINT_NAME=\"***PLEASE SET ENDPOINT_NAME HERE***\"",
+            "MBED_CONF_APP_PSK_IDENTITY=MBED_CONF_APP_ENDPOINT_NAME"
+      ]
+    },
+    "BT_01001_V0_2": {
+      "target.bootloader_img"       : "./bootloader/BT_01001_V0_2/mbed-bootloader_application.bin",
+      "target.header_offset"        : "0xc000",
+      "target.app_offset"           : "0xc800",
+      "fota.storage-start-address"  : "0x100000",
+      "fota.storage-size"           : "0x1d7000",
+      "nanostack-hal.critical-section-usable-from-interrupt" : true,
+      "nanostack-hal.event-loop-dispatch-from-application"   : false,
+      "nanostack-hal.event-loop-use-mbed-events"             : true,
+      "nanostack.configuration"                              : "ethernet_host",
+      "nsapi.default-cellular-apn"                : "\"m2m.tele2.com\"",
+      "nsapi.default-cellular-plmn"               : null,
+      "nsapi.default-cellular-sim-pin"            : null,
+      "nsapi.default-cellular-username"           : null,
+      "nsapi.default-cellular-password"           : null,
+      "cellular.radio-access-technology"          : "CellularNetwork::RadioAccessTechnology::RAT_GSM",
+      "cellular.debug-at"                         : false,
+      "cellular.use-apn-lookup"                   : false,
+      "cellular.use-sms"                          : false,
+      "cellular.clear-on-connect"                 : true,
+      "cellular.offload-dns-queries"              : null,
+      "QUECTEL_BG96.provide-default"              : false,
+      "target.macros_add": [
+            "MBED_CONF_APP_ENDPOINT_NAME=\"***PLEASE SET ENDPOINT_NAME HERE***\"",
+            "MBED_CONF_APP_PSK_IDENTITY=MBED_CONF_APP_ENDPOINT_NAME"
       ]
     },
     "DISCO_L475VG_IOT01A": {
+        "target.header_offset"                      : "0x12000",
+        "target.app_offset"                         : "0x12400",
         "target.network-default-interface-type"     : "WIFI",
         "target.components_add"                     : ["WIFI_ISM43362"],
+        "target.bootloader_img"                     : "./bootloader/DISCO_L475VG_IOT01A/mbed-bootloader_application.bin",
+        "fota.storage-start-address"                : "0x100000",
+        "fota.storage-size"                         : "0xed000",
         "nsapi.default-wifi-security"               : "WPA_WPA2",
         "nsapi.default-wifi-ssid"                   : "\"SSID\"",
-        "nsapi.default-wifi-password"               : "\"PASSWORD\""
+        "nsapi.default-wifi-password"               : "\"PASSWORD\"",
+        "target.macros_add": [
+            "MBED_CONF_APP_ENDPOINT_NAME=\"urn:dev:os:disco_david_saada_nosec\"",
+            "MBED_CONF_APP_PSK_IDENTITY=MBED_CONF_APP_ENDPOINT_NAME"
+        ]
+    },
+    "K64F": {
+        "target.header_offset"                      : "0x10000",
+        "target.app_offset"                         : "0x10400",
+        "target.network-default-interface-type"     : "ETHERNET",
+        "target.components_add"                     : ["SD"],
+        "target.bootloader_img"                     : "./bootloader/K64F/mbed-bootloader_application.bin",
+        "fota.storage-start-address"                : "0",
+        "fota.storage-size"                         : "0x100000",
+        "target.macros_add": [
+            "MBED_CONF_APP_ENDPOINT_NAME=\"***PLEASE SET ENDPOINT_NAME HERE***\"",
+            "MBED_CONF_APP_PSK_IDENTITY=MBED_CONF_APP_ENDPOINT_NAME"
+        ]
+    },
+    "NUCLEO_F429ZI": {
+        "target.header_offset"                      : "0x8000",
+        "target.app_offset"                         : "0x8400",
+        "target.network-default-interface-type"     : "ETHERNET",
+        "target.bootloader_img"                     : "./bootloader/NUCLEO_F429ZI/mbed-bootloader_application.bin",
+        "fota.block-device-type"                    : "FOTA_INTERNAL_FLASH_MBED_OS_BD",
+        "fota.fw-header-external"                   : false,
+        "fota.storage-start-address"                : "0x8120000",
+        "fota.storage-size"                         : "0xe0000",
+        "target.macros_add": [
+            "MBED_CONF_APP_ENDPOINT_NAME=\"***PLEASE SET ENDPOINT_NAME HERE***\"",
+            "MBED_CONF_APP_PSK_IDENTITY=MBED_CONF_APP_ENDPOINT_NAME"
+        ]
     }
   },
   "config": {
-    "endpoint_name": "\"***PLEASE SET ENDPOINT_NAME HERE***\"",
     "rg_nosec_addr": "\"coap://lwm2m-test.avsystem.io:5683\"",
     "rg_dtls_addr": "\"coaps://lwm2m-test.avsystem.io:5684\"",
     "bs_nosec_addr": "\"coap://lwm2m-test.avsystem.io:5693\"",
@@ -64,7 +123,6 @@
     "with_bs_server": false,
     "with_dtls": true,
     "with_psk": true,
-    "psk_identity": "\"***PLEASE SET PSK IDENTITY HERE***\"",
     "psk_key": "\"***PLEASE SET PSK KEY HERE***\"",
     "serial_menu_echo": true
   }

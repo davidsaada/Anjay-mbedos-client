@@ -1,5 +1,4 @@
 mbed-os/*
 anjay-mbedos/*
-bootloader/*
 .vscode/*
 X_NUCLEO_IKS01A2/*

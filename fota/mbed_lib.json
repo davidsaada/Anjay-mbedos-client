@@ -1,0 +1,51 @@
+{
+    "name": "fota",
+    "config": {
+        "enable": {
+            "help": "Enable/Disable FOTA functionality. Set true to enable.",
+            "macro_name": "MBED_CLOUD_CLIENT_FOTA_ENABLE",
+            "accepted_values" : [null, false, true],
+            "value": null           
+        },
+        "block-device-type": {
+            "help": "Type of block device: mbed-os internal flash, mbed-os default block device, custom (supply a block device instance) or external (implement all FOTA block device C APIs)",
+            "macro_name": "MBED_CLOUD_CLIENT_FOTA_BLOCK_DEVICE_TYPE",
+            "accepted_values": ["FOTA_INTERNAL_FLASH_MBED_OS_BD", "FOTA_CUSTOM_MBED_OS_BD", "FOTA_EXTERNAL_BD", "FOTA_DEFAULT_MBED_OS_BD"],
+            "value": null
+        },
+        "storage-start-address": {
+            "help": "FW candidate storage start address (physical)",
+            "macro_name": "MBED_CLOUD_CLIENT_FOTA_STORAGE_START_ADDR",
+            "value": null
+        },
+        "storage-size": {
+            "help": "FW candidate storage size",
+            "macro_name": "MBED_CLOUD_CLIENT_FOTA_STORAGE_SIZE",
+            "value": null
+        },
+        "trace-enable": {
+            "help": "Enable FOTA trace",
+            "macro_name": "FOTA_TRACE_ENABLE",
+            "accepted_values" : [null, false, true],
+            "value": null
+        },
+        "debug-trace": {
+            "help": "Enable FOTA debug traces",
+            "macro_name": "FOTA_TRACE_DBG",
+            "accepted_values" : [null, false, true],
+            "value": null
+        },
+        "has-legacy-bootloader": {
+            "help": "Include support for legacy bootloader",
+            "macro_name": "FOTA_HAS_LEGACY_BOOTLOADER",
+            "accepted_values" : [null, false, true],
+            "value": true
+        },
+        "fw-header-external": {
+            "help": "In legacy bootloader mode, tell if we use an external header (non-internal flash) or internal one (internal flash)",
+            "macro_name": "MBED_CLOUD_CLIENT_FOTA_FW_HEADER_EXTERNAL",
+            "accepted_values" : [null, false, true],
+            "value": null
+        }
+    }
+}

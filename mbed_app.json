@@ -13,34 +13,43 @@
       "cellular.radio-access-technology": "CellularNetwork::RadioAccessTechnology::RAT_GSM",
       "mbed-trace.enable": 1,
       "mbed-trace.max-level": "TRACE_LEVEL_DEBUG",
-      "nsapi.default-cellular-apn": "\"Plus\"",
+      "nsapi.default-cellular-apn"                : "\"uinternet\"",
+      "nsapi.default-cellular-username"           : "\"orange\"",
+      "nsapi.default-cellular-password"           : "\"orange\"",
       "platform.stdio-baud-rate": 115200,
       "platform.stdio-convert-newlines": 1,
       "target.OUTPUT_EXT": "bin",
       "target.app_offset": "0x10000"
     },
     "DISCO_L496AG": {
+      "cellular.radio-access-technology": "CellularNetwork::RadioAccessTechnology::RAT_GSM",
       "stmod_cellular.provide-default": "true",
       "target.components_add": [
         "STMOD_CELLULAR"
       ],
       "target.network-default-interface-type": "CELLULAR",
       "target.macros_add": [
-        "CELLULAR_DEVICE=STModCellular"
+        "SENSORS_IKS01A2=0",
+        "CELLULAR_DEVICE=STModCellular",
+            "MBED_CONF_APP_WITH_RG_SERVER=1",
+            "MBED_CONF_APP_WITH_BS_SERVER=0",
+            "MBED_CONF_APP_WITH_DTLS=1",
+            "MBED_CONF_APP_WITH_PSK=1",
+            "MBED_CONF_APP_ENDPOINT_NAME=\"david_disco_l496_http_test\"",
+            "MBED_CONF_APP_PSK_IDENTITY=MBED_CONF_APP_ENDPOINT_NAME"
       ]
     }
   },
   "config": {
-    "endpoint_name": "\"urn:dev:os:anjay-mbedos-test\"",
-    "rg_nosec_addr": "\"coap://try-anjay.avsystem.com:5683\"",
-    "rg_dtls_addr": "\"coaps://try-anjay.avsystem.com:5684\"",
-    "bs_nosec_addr": "\"coap://try-anjay.avsystem.com:5693\"",
-    "bs_dtls_addr": "\"coaps://try-anjay.avsystem.com:5684\"",
-    "with_rg_server": false,
-    "with_bs_server": true,
-    "with_dtls": false,
-    "psk_identity": "\"***PLEASE SET PSK IDENTITY HERE***\"",
-    "psk_key": "\"***PLEASE SET PSK KEY HERE***\"",
+    "rg_nosec_addr": "\"coap://lwm2m-test.avsystem.io:5683\"",
+    "rg_dtls_addr": "\"coaps://lwm2m-test.avsystem.io:5684\"",
+    "bs_nosec_addr": "\"coap://lwm2m-test.avsystem.io:5693\"",
+    "bs_dtls_addr": "\"coaps://lwm2m-test.avsystem.io:5694\"",
+    "psk_key": "\"111111111111111111111111\"",
+    "in_buffer_size" : 2048,
+    "out_buffer_size" : 2048,
+    "msg_cache_size" : 2048,
+    "forced_mtu" : 1492,
     "serial_menu_echo": true
   }
 }

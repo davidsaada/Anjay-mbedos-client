@@ -42,6 +42,8 @@
 #include "humidity.h"
 #include "magnetometer.h"
 
+#include "firmware_update.h"
+
 #include "default_config.h"
 
 
@@ -166,7 +168,7 @@ const char *get_endpoint_name() {
     if (endpoint_name[0] != '\0') {
         return endpoint_name;
     }
-
+#if USE_IMEI_AS_ENDPOINT
     if (const char *imei = try_get_modem_imei()) {
         int result = snprintf(endpoint_name, sizeof(endpoint_name),
                               "urn:imei:%s", imei);
@@ -175,6 +177,7 @@ const char *get_endpoint_name() {
             return endpoint_name;
         }
     }
+#endif
 
     return DEFAULT_ENDPOINT_NAME;
 }
@@ -205,9 +208,10 @@ void lwm2m_serve() {
         anjay_configuration_t CONFIG;
         memset(&CONFIG, 0, sizeof(CONFIG));
         CONFIG.endpoint_name = get_endpoint_name();
-        CONFIG.in_buffer_size = 1024;
-        CONFIG.out_buffer_size = 1024;
-        CONFIG.msg_cache_size = 2048;
+        CONFIG.in_buffer_size = MBED_CONF_APP_IN_BUFFER_SIZE;
+        CONFIG.out_buffer_size = MBED_CONF_APP_OUT_BUFFER_SIZE;
+        CONFIG.msg_cache_size = MBED_CONF_APP_MSG_CACHE_SIZE;
+        CONFIG.socket_config.forced_mtu = MBED_CONF_APP_FORCED_MTU;
 
         avs_log(lwm2m, INFO, "endpoint name: %s", CONFIG.endpoint_name);
         anjay_t *anjay = anjay_new(&CONFIG);
@@ -226,6 +230,7 @@ void lwm2m_serve() {
             || device_object_install(anjay) || joystick_object_install(anjay)
             || humidity_object_install(anjay) || barometer_object_install(anjay)
             || magnetometer_object_install(anjay)
+            || fw_update_install(anjay)
             || accelerometer_object_install(anjay)) {
             avs_log(lwm2m, ERROR, "cannot register data model objects");
             goto finish;
@@ -304,8 +309,8 @@ void print_stats(void) {
 #else
     mbed_stats_heap_t heap_stats;
     mbed_stats_heap_get(&heap_stats);
-    avs_log(mbed_stats, INFO, "Heap: %lu/%lu B used", heap_stats.current_size,
-            heap_stats.reserved_size);
+    avs_log(mbed_stats, INFO, "Heap: %lu/%lu B used (%lu max)", heap_stats.current_size,
+            heap_stats.reserved_size, heap_stats.max_size);
 #endif
 
 #if !MBED_CPU_STATS_ENABLED
